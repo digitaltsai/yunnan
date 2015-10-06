@@ -1,0 +1,140 @@
+#map {
+  position: relative;
+  width: 850px;
+  height: 600px;
+  overflow: visible;
+  margin-top: 20px;
+}
+
+#mapCanvas {
+  z-index: -2;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.mapCity {
+  position: absolute;
+  border: 1px solid #c0c0c0;
+}
+
+#mapOptions {
+  position: absolute;
+  bottom: 60px;
+  right: 130px;
+}
+
+#mapOptions button {
+  font-size: 30px;
+}
+
+#mapInstructions {
+  position: absolute;
+  top: 0px;
+  left: 350px;
+  width: 230px;
+  height: 100px;
+  z-index: 1000;
+}
+
+#mapBridges {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+.mapBridge {
+  border: 1px solid red;
+  position: absolute;
+  background-color: white;
+  z-index: 100;
+  display: none;
+}
+
+.mapConfirm {
+  display: block;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.mapCancel {
+  display: block;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.mapPlayer {
+  padding-left: 10px;
+}
+
+.mapSelected {
+  border-width: 3px;
+  border-color: #ffa100;
+  box-shadow: 0 0 10px #ffa100;
+}
+
+.mapHoverable {
+  cursor: pointer;
+  border-width: 3px;
+  border-color: #9ecaed;
+  box-shadow: 0 0 10px #9ecaed;
+}
+
+.mapSprite {
+  vertical-align: top;
+}
+
+.spriteHoverable {
+  cursor: pointer;
+  border: 1px solid red;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.mapHoverable:hover {
+  border-color: #0000ff;
+  box-shadow: 0 0 10px #0000ff;
+}
+
+.mapColor-blue img, img.mapColor-blue {
+  -webkit-filter: hue-saturate(190);
+  filter: hue-saturate(190);
+}
+
+.mapColor-purple img, img.mapColor-purple {
+  -webkit-filter: hue-rotate(30deg);
+  filter: hue-rotate(30deg);
+}
+
+.mapColor-yellow img, img.mapColor-yellow {
+  -webkit-filter: hue-rotate(340deg) invert(100%) saturate(100) brightness(90%);
+  filter: hue-rotate(340deg) invert(100%) saturate(100) brightness(90%);
+}
+
+.mapColor-red img, img.mapColor-red {
+  -webkit-filter: hue-rotate(90deg);
+  filter: hue-rotate(90deg);
+}
+
+.mapColor-green img, img.mapColor-green {
+  -webkit-filter: hue-rotate(273deg) invert(44%) saturate(20);
+  filter: hue-rotate(273deg) invert(44%) saturate(20);
+}
+
+.mapIncomeInfo {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #f0f0f0;
+  text-align: right;
+  padding: 3px;
+  opacity: .8;
+}
+
+.mapIncomeInfo img {
+  vertical-align: middle;
+}

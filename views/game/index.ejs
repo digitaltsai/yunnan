@@ -1,0 +1,144 @@
+<!DOCTYPE>
+<html>
+<head>
+  <script type="text/javascript" src="/javascripts/jquery.js"></script>
+  <script>
+    var userId = <%= user.id %>;
+    $(function() {
+      $('#createGameButton').click(function() {
+        var color = $('#createGameContainer input[name="color"]:checked').val();
+        var data = {color: color};
+        $.post('/game/new', data, function(result) {
+          console.log(result);
+          location.reload();
+        })
+      });
+
+      $.get('/game/list', function(result) {
+        for (var i = 0; i < result.length; i++) {
+          try {
+            var game = JSON.parse(result[i].value);
+          } catch(e) {
+            continue;
+          }
+          (function(game) {
+            if (!game) {
+              return;
+            }
+
+            var $row = $('<tr></tr>');
+            
+            $row.append('<td>' + game.id + '</td>')
+
+            var str = '';
+            for (var j = 0; j < game.playerIds.length; j++) {
+              var player = game.playerIds[j];
+              str += player.name + '-' + player.color + '<br>';
+            }
+            
+            $row.append('<td>' + str + '</td>')
+            
+            $row.append(game.phase);
+
+            var $actionTd = $('<td></td>');
+            // if prestart, you can join or start
+            if (game.phase == 'prestart') {
+              // check if in game
+              if (inGame(game)) {
+                // create start button
+                $actionTd.append(createStartButton(game));
+              } else {
+                // create join button
+                $actionTd.append(createJoinContainer(game));
+              }
+            } else {
+              $actionTd.append(createViewButton(game));
+            }
+
+            $row.append($actionTd);
+
+            $('tbody').append($row);
+          })(game)
+
+        }
+
+      });
+    });
+
+    function inGame(game) {
+      for (var i = 0; i < game.playerIds.length; i++) {
+        if (game.playerIds[i].id == userId) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function createJoinContainer(game) {
+      var $container = $('<div></div>');
+      var $button = $('<button>Join</button>');
+      $container.append($button);
+      $container.append(createColorRadios());
+      $button.click(function() {
+        var color = $container.find('input[name="color"]:checked').val();
+        $.post('/game/' + game.id + '/join', {color: color}, function(result) {
+          location.reload();
+          console.log(result);
+        });
+      })
+      return $container;
+    }
+
+    function createStartButton(game) {
+      var $button = $('<button>Start</button>');
+      $button.click(function() {
+        $.post('/game/' + game.id + '/start', function(result) {
+          location.reload();
+          console.log(result);
+        });
+      });
+
+      return $button;
+    }
+
+    function createViewButton(game) {
+      var $button = $('<button>View</button>');
+      $button.click(function() {
+        window.location = '/game/' + game.id;
+      });
+
+      return $button;
+    }
+
+    function createColorRadios() {
+      $radioGroup = $('<div></div>');
+      ['blue', 'red', 'purple', 'green', 'yellow'].forEach(function(color) {
+        $radioGroup.append('<input type="radio" name="color" value="' + color + '" checked> ' + color + '<br>');
+      });
+      return $radioGroup;
+    }
+  </script>
+</head>
+<body>
+  <h1>Yunnan</h1>
+  <p>Logged in as <%= user.email %></p>
+  <div id="createGameContainer">
+    <button id="createGameButton">Create new game</button><br>
+
+    <input type="radio" name="color" value="blue" checked> Blue<br>
+    <input type="radio" name="color" value="red"> Red<br>
+    <input type="radio" name="color" value="purple"> Purple<br>
+    <input type="radio" name="color" value="green"> Green<br>
+    <input type="radio" name="color" value="yellow"> Yellow<br>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Game ID</th><th>Players</th><th>Status</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</body>
+</html>

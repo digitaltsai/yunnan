@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/stylesheets/Game.css" type="text/css"/>
+  <link rel="stylesheet" href="/stylesheets/Map.css" type="text/css"/>
+  <script type="text/javascript" src="/javascripts/jquery.js"></script>
+  <script type="text/javascript" src="/javascripts/Util.js"></script>
+  <script type="text/javascript" src="/javascripts/EventEmitter.js"></script>
+  <script type="text/javascript" src="/javascripts/Map.js"></script>
+  <script type="text/javascript" src="/javascripts/Game.js"></script>
+  <script>
+    var userId = <%= user.id %>;
+    var gameId = '<%= game.id %>';
+    var gameUrl = '/game/' + gameId;
+    var player = <%- JSON.stringify(player) %>;
+
+    <% if (player.color == game.playerIds[game.currentPlayerIndex].color) { %>
+      alert('It is your turn');
+    <% } %>
+
+    $(function() {
+
+      startWebsocketConnection();
+
+      // this puts the bid button on each auction item
+      $('.auctionItem').each(function() {
+        (function($item) {
+          var itemName = $item.attr('id').split('_')[1];
+
+          $item.find('button').click(function() {
+            var value = $(this).attr('value');
+            var from = $('input[name="from"]:checked').val();
+            var postData = {auctionItem: itemName, bidLevel: value};
+            if (from != 'null') {
+              postData.from = from;
+            }
+
+            $.post(gameUrl + '/bid', postData, function(result) {
+              console.log(result);
+            }).fail(function(response) {
+              alert(response.responseText);
+            });
+          });
+        })($(this))
+      });
+
+      $('#passAuctionButton').click(function() {
+        if (player.freeTraders && !confirm('You still have unused traders, are you sure you want to pass?')) {
+          return;
+        }
+        $.post(gameUrl + '/passAuction', function(result) {
+          console.log(result);
+        }).fail(function(response) {
+          alert(response.responseText);
+        });
+      });
+
+      $('#auctionPuerButton').click(function() {
+        var from = $('input[name="from"]:checked').val();
+        var postData = {};
+        if (from != 'null') {
+          postData.from = from;
+        }
+        $.post(gameUrl + '/auctionPuer', postData, function(result) {
+          console.log(result);
+        }).fail(function(response) {
+          alert(response.responseText);
+        });
+      });
+
+      // check the first available
+      $('input[name="from"]').first().attr('checked', true);
+
+      $.get(gameUrl + '/info', function(result) {
+        var map = new GameMap('map', 'mapCanvas', result);
+        map.draw();
+
+        var game = new Game(result, map);
+      });
+    });
+
+    function startWebsocketConnection() {
+      var host = location.origin.replace(/^http/, 'ws')
+      var ws = new WebSocket(host);
+      ws.onmessage = function (event) {
+        if (event.data == 'success') {
+          ws.send(JSON.stringify({gameId: gameId}));
+        } else {
+          location.reload();
+        }        
+      };
+    }
+  </script>
+  <style type="text/css">
+    p {
+      margin: 0;
+    }
+
+    .auctionPhase div {
+      float: left;
+    }
+
+    .movePhase div {
+      float: right;
+    }
+
+    .currentPlayer {
+      font-weight: bold;
+    }
+
+    .auctionsContainer {
+      overflow: hidden;
+    }
+
+    .auctionsContainer .auctionItem, #auctionFrom, .auctionsContainer {
+      float: left;
+      border: 1px solid gray;
+      padding: 5px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+    <h1 style="margin-top:0">Yunnan <span class='titleSmall'>Logged in as <%= user.email %></span></h1>
+
+    <!-- player information -->
+    <div id='playerBar'>
+      <% for (var i = 0; i < game.playerIds.length; i++) { %>
+        <div class='playerInfo <%=game.playerIds[i].color%>Bg <%= game.currentPlayerIndex == i ? game.playerIds[i].color+'Highlight' : '' %>'>
+          <%= game.currentPlayerIndex == i ? '*' : '' %> <%=game.playerIds[i].name%><br>
+          <table class='playerInfoTable'>
+            <tr>
+              <!--
+              <td>Color</td>
+              <td><%= game.playerIds[i].color[0].toUpperCase() + game.playerIds[i].color.substr(1) %><br></td>
+              -->
+              <td class='infoIcon'><img src='/images/star_icon.png' title='Points'></td>
+              <td><%=game.players[game.playerIds[i].color].points%></td>
+              <td class='infoIcon'><img src='/images/coins.png' title='Coins'></td>
+              <td><%=game.players[game.playerIds[i].color].coins%></td>
+            </tr>
+            <tr>
+              <td class='infoIcon'><img src='/images/crown.png' title='Influence'></td>
+              <td><%=game.players[game.playerIds[i].color].influence%></td>
+              <td class='infoIcon'><img src='/images/teaHouse.png' class='mapColor-<%=game.playerIds[i].color%>' title='Tea Houses in supply'></td>
+              <td><%=game.players[game.playerIds[i].color].buildings.teaHouse%></td>
+            </tr>
+            <tr>
+              <td class='infoIcon'><img src='/images/boot.png' title='Border Crossings'></td>
+              <td><%=game.players[game.playerIds[i].color].border%></td>
+              <td class='infoIcon'><img src='/images/tradingPost.png' class='mapColor-<%=game.playerIds[i].color%>' title='Trading Posts in supply'></td>
+              <td><%=game.players[game.playerIds[i].color].buildings.tradingPost%></td>
+            </tr>
+            <tr>
+              <td class='infoIcon'><img src='/images/person.png' class='mapColor-<%=game.playerIds[i].color%>' title='Traders in supply'></td>
+              <td><%=game.players[game.playerIds[i].color].freeTraders%>/<%=game.players[game.playerIds[i].color].totalTraders%></td>
+              <td class='infoIcon'><img src='/images/bridge.png' title='Bridges in supply'></td>
+              <td><%=game.players[game.playerIds[i].color].buildings.bridge%></td>
+            </tr>
+          </table>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- phase -->
+    <div>
+      <h2>Phase - <%= game.phase[0].toUpperCase() + game.phase.substr(1) %></h2>
+      <% switch(game.phase) {
+          case 'auction': %>
+
+          <% if (game.round != 1) { %>
+            <p class='explanation'>Turn order was determined by the number of points earned last round.</p>
+          <% } %>
+          <p class='explanation'>Welcome is the auction phase. You take turns bidding on upgrades. You can be
+            kicked out of the 5 and 7 slots if there is a higher bid on the same upgrade.</p>
+          <p class='explanation'>If you bid on the bank, you will move everyone you have from the auction to Pu'er.
+            Beware though, you will also end your turn, so if you have any free traders in supply, they will be
+            unavailable this round. Bidding on the bank gives you money depending on the total cost of the auction
+            when the auction phase is over.</p>
+          <div class='explanation'>Bank buckets:
+            <table border="1px solid black" cellspacing="0" class='bankBuckets'>
+              <% var buckets = [6, 12, 18, 23, 28, 32, 36, 39, 42, 45, 48, 51, 54, 57, 61, 65, 69, 74, 79, 86, 92, 99]; %>
+              <tr>
+                <td>Bucket</td>
+                <% var last = 0;
+                  for (var i = 0; i < buckets.length; i++) { %>
+                  <td><%- last %>-<%- buckets[i]-1 %></td>
+                  <% last=buckets[i] %>
+                <% } %>
+              </tr>
+              <tr>
+                <td>High</td>
+                <% for (var i = 0; i < buckets.length; i++) { %>
+                  <td><%- i + 6 %></td>
+                <% } %>
+              </tr>
+              <tr>
+                <td>Low</td>
+                <%  for (var i = 0; i < buckets.length; i++) { %>
+                  <td><%- Math.floor(i + 5) %></td>
+                <% } %>
+              </tr>
+            </table>
+          </div>
+            <% break; %>
+            <% case 'resolve': %>
+            <p class="explanation">We are currently in the phase of resolving auctions. If someone has won the bid on buildings, they
+              are currently selecting which building to choose.</p>
+            <% break; %>
+            <% case 'move': %>
+            <p class="explanation">The player's turn order has been reversed from the auction
+              phase. In this phase, you may build any free buildings you have won from past auctions. You may also move traders
+              around the board depending on how many border crossings you have.</p>
+            <p class="explanation">If you move to a region where there is another player's trader, and that player has lower influence than you, then you may kick one of their trader in that region back one region following the road.</p>
+            <p class="explanation">At the end of your turn, all your traders must have a connected route to Pu'er, or else they will
+              automatically be moved to Pu'er.</p>
+            <% break; %>
+            <% case 'income': %>
+            <p class="explanation">You have earned <%= player.income %> income this round. You may choose how much
+            of it you want to convert to points.</p>
+            <%default:
+            break; 
+          } %>
+
+    </div>
+
+    <!-- auction information -->
+    <% if (game.phase === 'auction') { %>
+      <div class="phase phaseAuction auctionStyle">
+        <h2>Auction Options</h2>
+        <% if (player.color == game.playerIds[game.currentPlayerIndex].color) { %>
+        <div id="auctionOtherActions">
+          <button class="enterButton" id="auctionPuerButton">Place trader in Pu'er</button>
+          <button class="enterButton" id="passAuctionButton">Pass Auction Phase</button>
+        </div>
+        <% } %>
+        <div class="auctionsContainer">
+              <% for (var auctionItem in game.auctions) { %>
+                <div class="auctionItem" id="auction_<%= auctionItem %>">
+                  <table>
+                    <tr>
+                      <th class="auctionItemHeader" colspan=2><%= auctionItem[0].toUpperCase() + auctionItem.substr(1) %></th>
+                    </tr>
+                    <tr>
+                      <th>Cost</th><th>Bidder</th>
+                    </tr>
+                    <% for (var j in game.auctions[auctionItem]) { %>
+                      <tr>
+                        <td<%- (j > 7) ? ' class="highBid"' : '' %>><%= j %><%- (j < 9) ? '*' : '' %></td>
+                        <td>
+                        <% if (game.auctions[auctionItem][j]) { %>
+                          <img src='/images/person.png' class="mapColor-<%- game.auctions[auctionItem][j] %>">
+                        <% } else { %>
+                          <button class="enterButton" value="<%= j %>"<% if (player.color != game.playerIds[game.currentPlayerIndex].color) { %> disabled<% }%>>Bid</button>
+                        <% } %>
+                      </td>
+                    <% } %>
+                  </table>
+                </div>
+              <% } %>
+
+            <div id="auctionFrom">
+              <p>Take trader from...</p>
+              <% if (player.freeTraders > 0) { %>
+                <input type="radio" name="from" value="null"> Supply (<%= player.freeTraders %>)<br>
+              <% } %>
+              <% for (var i in game.board) {
+                  if (i !== 'bridges' && game.board[i].name != 'PU\'ER' && game.board[i].traders[player.color]) { %>
+                  <input type="radio" name="from" value="<%=game.board[i].name%>"> <%=game.board[i].name%> (<%= game.board[i].traders[player.color] %>)
+              <% }
+               } %>
+            </div>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- auction snapshop -->
+    <% if (game.auctionSnapshot && game.phase !== 'auction' && game.phase !== 'income') { %>
+      <div class="phase phaseAuctionSnapshot auctionStyle">
+        <button id="auctionSnapshotButton">Show Auction Results</button>
+        <div class='pastResults'>
+          <div class="auctionsContainer auctionSnapshot">
+                <% for (var auctionItem in game.auctionSnapshot) { %>
+                <div class="auctionItem" id="auction_<%= auctionItem %>">
+                  <table>
+                    <tr>
+                      <th class="auctionItemHeader" colspan=2><%= auctionItem[0].toUpperCase() + auctionItem.substr(1) %></th>
+                    </tr>
+                    <tr>
+                      <th>Cost</th><th>Bidder</th>
+                    </tr>
+                    <% for (var j in game.auctionSnapshot[auctionItem]) { %>
+                      <tr>
+                        <td<%- (j > 7) ? ' class="highBid"' : '' %>><%= j %><%- (j < 9) ? '*' : '' %></td>
+                        <td>
+                        <% if (game.auctionSnapshot[auctionItem][j]) { %>
+                          <img src='/images/person.png' class="mapColor-<%- game.auctionSnapshot[auctionItem][j] %>">
+                        <% } %>
+                      </td>
+                    <% } %>
+                  </table>
+                </div>
+              <% } %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- resolve which building to get -->
+    <% if (game.phase === 'resolve' && player.color == game.playerIds[game.currentPlayerIndex].color) { %>
+    <div class="phase phaseResolve">
+      <h3>Choose your building for auction</h3>
+      <div class="resolveAuctionButton mapHoverable" id="resolveTeaHouse" data-src="teaHouse"><img src='/images/teahouse.png'> Tea House</div>
+      <div class="resolveAuctionButton mapHoverable" id="resolveTradingPost" data-src="tradingPost"><img src='/images/tradingpost.png'> Trading Post</div>
+      <div class="resolveAuctionButton mapHoverable" id="resolveBridge" data-src="bridge"><img src='/images/bridge.png'> Bridge</div>
+    </div>
+    <% } %>
+
+    <!-- move phase options -->
+    <% if (game.phase === 'move' && player.color == game.playerIds[game.currentPlayerIndex].color) { %>
+    <div class="phase phaseMove">
+      <h2>Options</h2>
+      <% if (player.freeMoves) { %><button id="mapMoveButton">Move Trader</button> <% } %><button id="mapMoveEndButton">End Turn</button>
+      <div id="moveBuildOptions">
+        <% if (player.buildings.teaHouse) { %><div class="buildTeaHouse moveBuild mapHoverable" data-src="teaHouse"><img src='/images/teahouse.png'> Build Tea House</div><% } %>
+        <% if (player.buildings.tradingPost) { %><div class="buildTradingPost moveBuild mapHoverable" data-src="tradingPost"><img src='/images/tradingpost.png'> Build Trading Post</div><% } %>
+        <% if (player.buildings.bridge) { %><div class="buildBridge moveBuild mapHoverable" data-src="bridge">- Build Bridge</div><% } %>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (game.phase === 'income' && player.color == game.playerIds[game.currentPlayerIndex].color) { %>
+    <div class="phase phaseIncome">
+      Income: <%= player.income %><br>
+      Points: <input id="incomePoints" type="points" min="0" step="1"><br>
+      Coins: <input id="incomeCoins" type="coins" min="0" step="1"><br>
+      <button>Submit</button>
+    </div>
+    <% } %>
+
+    <!-- map information -->
+    <div>
+      <div id="map">
+        <canvas id="mapCanvas"></canvas>
+        <div id="mapInstructions"></div>
+        <div id="mapBridges"></div>
+      </div>
+    </div>
+
+    <!-- history -->
+    <div>
+      <h2>Game Logs (most recent at top)</h2>
+      <% for (var i = game.history.length-1; i > -1; i--) { %>
+        <p><%= game.history[i] %>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
