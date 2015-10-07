@@ -53,7 +53,7 @@ module.exports = {
 
   list: function(filter, callback) {
     // console.log('listing', filter)
-    KeyValue.find({}).sort({date: 'asc'}).exec(function(err, keyValue) {
+    KeyValue.find({}).exec(function(err, keyValue) {
       if (err || !keyValue) {
         return callback(err, keyValue);
       }

@@ -38,7 +38,7 @@ var gameConfig = {
               }
             },
             {
-              name: 'QUINGHAI',
+              name: 'QINGHAI',
               presents: 2,
               income: {
                 trader: 18,
@@ -47,8 +47,8 @@ var gameConfig = {
             }],
   bridges: [{start: 'YUNNAN', end: 'QAMBDO'},
             {start: 'YUNNAN', end: 'TIBET'},
-            {start: 'SICHUAN', end: 'QUINGHAI'},
-            {start: 'QUAMDO', end: 'QUINGHAI'}],
+            {start: 'SICHUAN', end: 'QINGHAI'},
+            {start: 'QUAMDO', end: 'QINGHAI'}],
   validColors: ['red', 'blue', 'purple', 'yellow', 'green']
 }
 

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Prestart</title>
+  <style type="text/css">
+    .infoContainer {
+      overflow: hidden;
+    }
+
+    .playerInfo {
+      width: 200px;
+      height: 100px;
+      padding: 20px;
+      text-align: center;
+      float: left;
+      border-radius: 5px;
+    }
+
+    .blueBg {
+      background-color: #D6EBFF;
+      border-color: #0000CC;
+    }
+
+    .yellowBg {
+      background-color: #FFFF75;
+      border-color: #FF9900;
+    }
+
+    .purpleBg {
+      background-color: #D1B2F0;
+      border-color: #6600CC;
+    }
+
+    .redBg {
+      background-color: #FFB2B2;
+      border-color: #FF0000;
+    }
+
+    .greenBg {
+      background-color: #99AD99;
+      border-color: #00FF00;
+    }
+
+
+    #startGame {
+      font-size: 20px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+  <script type="text/javascript" src="/javascripts/jquery.js"></script>
+  <script type="text/javascript">
+    var gameId = '<%= game.id %>';
+
+    startWebsocketConnection();
+
+    function startWebsocketConnection() {
+      var host = location.origin.replace(/^http/, 'ws')
+      var ws = new WebSocket(host);
+      ws.onmessage = function (event) {
+        if (event.data == 'success') {
+          ws.send(JSON.stringify({gameId: gameId}));
+        } else {
+          location.reload();
+        }        
+      };
+    }
+  </script>
+</head>
+<body>
+  <h1>Current players</h1>
+  <div class="infoContainer">
+    <% for (var i = 0; i < game.playerIds.length; i++) { %>
+      <div class='playerInfo <%=game.playerIds[i].color%>Bg'>
+        <%- game.playerIds[i].name %> <br>
+        <%-game.playerIds[i].color %>
+      </div>
+    <% } %>
+  </div>
+  <% if (player) { %>
+    <button id="startGame">Start Game</button>
+  <% } %>
+
+  <script>
+  $('#startGame').click(function() {
+    if (!confirm('Are you sure you want to start the game?')) {
+      return;
+    }
+
+    $.post('/game/<%- game.id %>/start', function(result) {
+
+    });
+  })
+
+  </script>
+</body>
+</html>

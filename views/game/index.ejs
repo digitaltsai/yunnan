@@ -1,12 +1,25 @@
 <!DOCTYPE>
 <html>
 <head>
+  <style type="text/css">
+    table {
+      margin-top: 20px;
+    }
+
+    table td, table th {
+      padding-top: 20px;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 20px;
+    }
+  </style>
   <script type="text/javascript" src="/javascripts/jquery.js"></script>
+  <script type="text/javascript" src="/javascripts/moment.js"></script>
   <script>
     var userId = <%= user.id %>;
     $(function() {
       $('#createGameButton').click(function() {
-        var color = $('#createGameContainer input[name="color"]:checked').val();
+        var color = $('#createColor').val();
         var data = {color: color};
         $.post('/game/new', data, function(result) {
           console.log(result);
@@ -38,7 +51,7 @@
             
             $row.append('<td>' + str + '</td>')
             
-            $row.append(game.phase);
+            $row.append('<td>' + game.phase + '</td>');
 
             var $actionTd = $('<td></td>');
             // if prestart, you can join or start
@@ -46,7 +59,8 @@
               // check if in game
               if (inGame(game)) {
                 // create start button
-                $actionTd.append(createStartButton(game));
+                // $actionTd.append(createStartButton(game));
+                $actionTd.append(createViewButton(game));
               } else {
                 // create join button
                 $actionTd.append(createJoinContainer(game));
@@ -56,6 +70,8 @@
             }
 
             $row.append($actionTd);
+
+            $row.append('<td>' + moment(new Date(game.lastUpdate)).format('MMM D, hh:mm:ss') + '</td>')
 
             $('tbody').append($row);
           })(game)
@@ -123,18 +139,19 @@
   <h1>Yunnan</h1>
   <p>Logged in as <%= user.email %></p>
   <div id="createGameContainer">
-    <button id="createGameButton">Create new game</button><br>
-
-    <input type="radio" name="color" value="blue" checked> Blue<br>
-    <input type="radio" name="color" value="red"> Red<br>
-    <input type="radio" name="color" value="purple"> Purple<br>
-    <input type="radio" name="color" value="green"> Green<br>
-    <input type="radio" name="color" value="yellow"> Yellow<br>
+    <button id="createGameButton">Create new game as</button> 
+    <select id="createColor">
+      <option name="color" value="blue" checked>Blue</option>
+      <option name="color" value="red">Red</option>
+      <option name="color" value="purple">Purple</option>
+      <option name="color" value="green">Green</option>
+      <option name="color" value="yellow">Yellow</option>
+    </select>
   </div>
-  <table>
+  <table border="1px solid black" cellspacing="0">
     <thead>
       <tr>
-        <th>Game ID</th><th>Players</th><th>Status</th><th>Action</th>
+        <th>Game ID</th><th>Players</th><th>Status</th><th>Action</th><th>Last Update</th>
       </tr>
     </thead>
     <tbody>

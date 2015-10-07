@@ -1,7 +1,7 @@
 (function() {
 
   var config = {
-    order: ['PU\'ER', 'YUNNAN', 'SICHUAN', 'QAMBDO', 'TIBET', 'QUINGHAI'],
+    order: ['PU\'ER', 'YUNNAN', 'SICHUAN', 'QAMBDO', 'TIBET', 'QINGHAI'],
     
     sprite: {
       width: 9,
@@ -19,18 +19,18 @@
       },
       {
         start: 'SICHUAN',
-        end: 'QUINGHAI'
+        end: 'QINGHAI'
       },
       {
         start: 'QAMBDO',
-        end: 'QUINGHAI'
+        end: 'QINGHAI'
       }
     ],
 
   // bridges: [{start: 'YUNNAN', end: 'QAMBDO'},
   //           {start: 'YUNNAN', end: 'TIBET'},
-  //           {start: 'SICHUAN', end: 'QUINGHAI'},
-  //           {start: 'QUAMDO', end: 'QUINGHAI'}],
+  //           {start: 'SICHUAN', end: 'QINGHAI'},
+  //           {start: 'QUAMDO', end: 'QINGHAI'}],
 
     cities: {
       'PU\'ER': {
@@ -50,7 +50,7 @@
         x: 600,
         y: 0,
         'bridges': {
-          'QUINGHAI': true
+          'QINGHAI': true
         }
       },
       
@@ -58,7 +58,7 @@
         x: 350,
         y: 120,
         'bridges': {
-          'QUINGHAI': true
+          'QINGHAI': true
         }
       },
 
@@ -67,7 +67,7 @@
         y: 200
       },
 
-      'QUINGHAI': {
+      'QINGHAI': {
         x: 100,
         y: 0
       }
@@ -102,7 +102,7 @@
           y: 200
         },
 
-        'QUINGHAI': {
+        'QINGHAI': {
           x: 100,
           y: 0
         }

@@ -67,7 +67,7 @@ router.get('/:gameId', function(req, res, next) {
   var gameId = req.params.gameId;
 
   if (req.game.phase == 'prestart') {
-    return res.send('game not started yet');
+    return res.render('game/prestart', {game: req.game, player: req.player});
   }
 
   res.render('game/game', {user: req.user, game: req.game, player: req.player});

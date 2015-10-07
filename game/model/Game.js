@@ -26,6 +26,9 @@ var Game = function(gameId, options) {
 
     this.passAuction = true;
     this.resolvedAuction = true;
+
+    this.createTime = new Date().getTime();
+    this.lastUpdate = new Date().getTime();
   }
 
   var Region = function(regionProps) {
@@ -96,7 +99,21 @@ Game.find = function(gameId, callback) {
 }
 
 Game.list = function(callback) {
-  db.list('game-', callback);
+  db.list('game-', function(err, games) {
+    if (err || !games) {
+      return callback(err);
+    }
+
+    games = games.sort(function(a, b) {
+      if (a.lastUpdate > b.lastUpdate) {
+        return -1;
+      }  else {
+        return 1;
+      }
+    });
+
+    return callback(err, games);
+  });
 }
 
 Game.create = function(user, color, callback) {
@@ -133,6 +150,7 @@ Game.create = function(user, color, callback) {
 };
 
 Game.prototype.save = function(callback) {
+  this.lastUpdate = new Date().getTime();
   db.set('game-' + this.id, this, function(err, game) {
     ws.gameAlert(game.id, 'updated');
     callback(err, game);
