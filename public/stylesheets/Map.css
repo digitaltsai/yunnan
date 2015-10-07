@@ -53,6 +53,12 @@
   display: none;
 }
 
+.mapBridgeAuction {
+  display: block;
+  border: 1px dashed #c0c0c0;
+  z-index: -5;
+}
+
 .mapConfirm {
   display: block;
   font-size: 15px;

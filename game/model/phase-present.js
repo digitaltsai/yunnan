@@ -2,6 +2,7 @@ var config = require('../config');
 
 module.exports = function(Game) {
   Game.prototype.startPresentPhase = function() {
+    var self = this;
     for (var regionName in this.board) {
       var region = this.board[regionName];
       if (region.presents) {
@@ -9,41 +10,49 @@ module.exports = function(Game) {
         // create the queue of people to give presents to
 
         // get the highest influence
-        var highestInfluence = 0;
+        var highestInfluences = [];
         for (var color in region.traders) {
-          if (this.players[color].influence > highestInfluence) {
-            highestInfluence = this.players[color].influence
+          if (highestInfluences.indexOf(this.players[color].influence) === -1) {
+            highestInfluences.push(this.players[color].influence);
           }
         }
+
+        highestInfluences.sort().reverse();
 
         var traderCopy = JSON.parse(JSON.stringify(region.traders));
-        for (var color in traderCopy) {
-          if (highestInfluence != this.players[color].influence) {
-            traderCopy[color] = 0;
+
+        // time to create the queue
+
+        var influenceExists = function(influenceLevel, traderCopy) {
+          for (var color in traderCopy) {
+            if (traderCopy[color] && self.players[color].influence == influenceLevel) {
+              return true;
+            } 
+          }
+          return false;
+        };
+
+        var queue = [];
+        for (var i = 0; i < highestInfluences.length; i++) {
+          var counter = 0;
+          while (influenceExists(highestInfluences[i], traderCopy)) {
+            var playerIndex = counter % this.playerIds.length;
+            var color = this.playerIds[playerIndex].color;
+            if (traderCopy[color] && this.players[color].influence == highestInfluences[i]) {
+              traderCopy[color]--;
+              queue.push(color);
+            }
+            counter++;
           }
         }
-
-        var tradersLeft = function(traderCopy) {
-          var total = 0;
-          for (var i in traderCopy) {
-            total += traderCopy[i];
-          }
-          return total;
+        console.log(highestInfluences, queue, traderCopy);
+        while (queue.length && region.presents > 0) {
+          var color = queue.shift();
+          region.presents--;
+          this.players[color].presents++;
+          this.addLog(this.players[color], "gets a present from " + region.name);
         }
 
-        var playerIndex = 0;
-        while (tradersLeft(traderCopy) > 0 && region.presents > 0) {
-          if (traderCopy[this.playerIds[playerIndex].color]) {
-            traderCopy[this.playerIds[playerIndex].color]--;
-            this.players[this.playerIds[playerIndex].color].presents++;
-            region.presents--;
-          }
-
-          playerIndex++;
-          if (playerIndex == this.playerIds.length) {
-            playerIndex = 0;
-          }
-        }
       }
     }
 

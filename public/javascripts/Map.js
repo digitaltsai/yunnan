@@ -183,7 +183,9 @@
     rect.css('height', '10px');
     rect.css('left', Math.min(x1, x2));
     rect.css('top', Math.min(y1, y2) + (Math.floor(Math.abs(y2 - y1)/2) - 10));
-
+    if (phase == 'auction') {
+      rect.addClass('mapBridgeAuction');
+    }
     
     rect.css('-webkit-transform', 'rotate(' + angleDeg + 'deg)')
     return rect;

@@ -141,7 +141,7 @@ module.exports = function(Game) {
       throw new Error('you have not explored this far yet');
     }
 
-    if (player.horseLocation < this.getLocationIndex(endLocation)) {
+    if (endLocation && player.horseLocation < this.getLocationIndex(endLocation)) {
       throw new Error('you have not explored this far yet');
     }
 

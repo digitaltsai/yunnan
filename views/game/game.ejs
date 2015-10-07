@@ -1,9 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <%
+    var tooltips = {
+      'points': 'Points<br><br>When a player reaches 80 points, the game will end at the end of the round.',
+
+      'coins': 'Coins<br><br>What you need to bid on auctions. You can also convert 3 coins into 1 point at the end of the game.',
+
+      'bank': 'Bidding on the bank will immediately do the following:<br>1. Move anyone you have in auction houses to Pu\'er, freeing up whichever spot they were in.<br>2. End your turn, so you may no longer bid.<br><br>The number of coins you get is shown in the table above. The bucket is determined by the sum of all auction item prices at the end of the auction phase.',
+
+      'trader': 'Place an extra trader (not from supply) into Pu\'er. You can move the trader this round in the move phase.',
+
+      'horse': 'Move your horse to the next province. Your buildings and traders can only go as far as your horse has explored.',
+
+      'building': 'Receive a building of your choice. Keep in mind you can only have two of each type of buildings.<br><br>Tea House: If an inspector comes to a region with a tea house, the owner of the tea house is immune. Tea houses are also worth 12 points at the end of the game.<br><br>Trading Post: Trading posts provide income and can connect routes.<br><br>Bridge: A bridge can shorten the distance it takes to travel to a location. You may build bridges at the dashed lines',
+
+      'influence': 'Influence<br><br>When you move a trader to a region, you may kick a player with lower influence back one region. When an inspector goes to a region, he always kicks the player with the higher influence, unless the player has an influence of 4.',
+
+      'border': 'Border Crossings<br><br>This is the number of border crossings you get during the start of your move phase.',
+
+      'presents': 'Presents<br><br>Each present is worth 5 points.',
+
+      'placePuer': 'Place a trader in Pu\'er. You may move him when the movement phase starts.',
+
+      'income': 'How much the player earned last round. This is dependent on the position and number of people on the map.'
+    }
+  %>
+
   <link rel="stylesheet" href="/stylesheets/Game.css" type="text/css"/>
   <link rel="stylesheet" href="/stylesheets/Map.css" type="text/css"/>
   <script type="text/javascript" src="/javascripts/jquery.js"></script>
+  <script type="text/javascript" src="/javascripts/jquery-ui.js"></script>
   <script type="text/javascript" src="/javascripts/Util.js"></script>
   <script type="text/javascript" src="/javascripts/EventEmitter.js"></script>
   <script type="text/javascript" src="/javascripts/Map.js"></script>
@@ -13,12 +40,19 @@
     var gameId = '<%= game.id %>';
     var gameUrl = '/game/' + gameId;
     var player = <%- JSON.stringify(player) %>;
+    var phase = '<%= game.phase %>';
 
     <% if (player.color == game.playerIds[game.currentPlayerIndex].color) { %>
-      alert('It is your turn');
+      //alert('It is your turn');
     <% } %>
 
     $(function() {
+
+      $(document).tooltip({
+          content: function () {
+              return $(this).prop('title');
+          },
+      });
 
       startWebsocketConnection();
 
@@ -135,28 +169,34 @@
               <td>Color</td>
               <td><%= game.playerIds[i].color[0].toUpperCase() + game.playerIds[i].color.substr(1) %><br></td>
               -->
-              <td class='infoIcon'><img src='/images/star_icon.png' title='Points'></td>
+              <td class='infoIcon'><img src='/images/star_icon.png' title='<%- tooltips['points'] %>'></td>
               <td><%=game.players[game.playerIds[i].color].points%></td>
-              <td class='infoIcon'><img src='/images/coins.png' title='Coins'></td>
+              <td class='infoIcon'><img src='/images/coins.png' title='<%- tooltips['coins'] %>'></td>
               <td><%=game.players[game.playerIds[i].color].coins%></td>
             </tr>
             <tr>
-              <td class='infoIcon'><img src='/images/crown.png' title='Influence'></td>
+              <td class='infoIcon'><img src='/images/crown.png' title='<%- tooltips['influence'] %>'></td>
               <td><%=game.players[game.playerIds[i].color].influence%></td>
-              <td class='infoIcon'><img src='/images/teahouse.png' class='mapColor-<%=game.playerIds[i].color%>' title='Tea Houses in supply'></td>
-              <td><%=game.players[game.playerIds[i].color].buildings.teaHouse%></td>
+              <td class='infoIcon'><img src='/images/person.png' class='mapColor-<%=game.playerIds[i].color%>' title='Traders in supply'></td>
+              <td><%=game.players[game.playerIds[i].color].freeTraders%>/<%=game.players[game.playerIds[i].color].totalTraders%></td>
             </tr>
             <tr>
-              <td class='infoIcon'><img src='/images/boot.png' title='Border Crossings'></td>
+              <td class='infoIcon'><img src='/images/boot.png' title='<%- tooltips['border'] %>'></td>
               <td><%=game.players[game.playerIds[i].color].border%></td>
               <td class='infoIcon'><img src='/images/tradingpost.png' class='mapColor-<%=game.playerIds[i].color%>' title='Trading Posts in supply'></td>
               <td><%=game.players[game.playerIds[i].color].buildings.tradingPost%></td>
             </tr>
             <tr>
-              <td class='infoIcon'><img src='/images/person.png' class='mapColor-<%=game.playerIds[i].color%>' title='Traders in supply'></td>
-              <td><%=game.players[game.playerIds[i].color].freeTraders%>/<%=game.players[game.playerIds[i].color].totalTraders%></td>
+              <td class='infoIcon'><img src='/images/present.gif' title='<%- tooltips['presents'] %>'></td>
+              <td><%=game.players[game.playerIds[i].color].presents%></td>
               <td class='infoIcon'><img src='/images/bridge.png' title='Bridges in supply'></td>
               <td><%=game.players[game.playerIds[i].color].buildings.bridge%></td>
+            </tr>
+            <tr>
+              <td class='infoIcon'><img src='/images/uparrow.png' title='<%- tooltips['income'] %>'></td>
+              <td><%=game.players[game.playerIds[i].color].income%></td>
+              <td class='infoIcon'><img src='/images/teahouse.png' class='mapColor-<%=game.playerIds[i].color%>' title='Tea Houses in supply'></td>
+              <td><%=game.players[game.playerIds[i].color].buildings.teaHouse%></td>
             </tr>
           </table>
         </div>
@@ -165,19 +205,25 @@
 
     <!-- phase -->
     <div>
+      <% if (game.round == 1 && game.phase == 'auction') { %>
+        <p class='explanation'>The game ends when someone reaches 80 points. You gain points from income of traders and trading posts on the
+          map. Points from tea houses and presents do not factor into the 80 points needed to end the game. They are only counted after.</p>
+
+        <p class='explanation'>The first phase is bidding on auctions to gain upgrades. The second phase is moving. The further along your people
+          and trading posts are, the more income you get. The third phase is converting income to points and coins.</p>
+      <% } %>
+
       <h2>Phase - <%= game.phase[0].toUpperCase() + game.phase.substr(1) %></h2>
       <% switch(game.phase) {
           case 'auction': %>
 
           <% if (game.round != 1) { %>
             <p class='explanation'>Turn order was determined by the number of points earned last round.</p>
-          <% } %>
+          <% }%>
           <p class='explanation'>Welcome is the auction phase. You take turns bidding on upgrades. You can be
-            kicked out of the 5 and 7 slots if there is a higher bid on the same upgrade.</p>
-          <p class='explanation'>If you bid on the bank, you will move everyone you have from the auction to Pu'er.
-            Beware though, you will also end your turn, so if you have any free traders in supply, they will be
-            unavailable this round. Bidding on the bank gives you money depending on the total cost of the auction
-            when the auction phase is over.</p>
+            kicked out of the 5 and 7 slots if there is a higher bid on the same upgrade. Your kicked out trader
+            can be used to bid on other items or place in Pu'er. If you are kicked out after you end your auction
+            turn, your turn is no longer ended.</p>
           <div class='explanation'>Bank buckets:
             <table border="1px solid black" cellspacing="0" class='bankBuckets'>
               <% var buckets = [6, 12, 18, 23, 28, 32, 36, 39, 42, 45, 48, 51, 54, 57, 61, 65, 69, 74, 79, 86, 92, 99]; %>
@@ -215,10 +261,17 @@
             <p class="explanation">If you move to a region where there is another player's trader, and that player has lower influence than you, then you may kick one of their trader in that region back one region following the road.</p>
             <p class="explanation">At the end of your turn, all your traders must have a connected route to Pu'er, or else they will
               automatically be moved to Pu'er.</p>
+            <p class="explanation">At the end of the movement phase, the inspector will move to the richest region and kick a trader of the player with
+            the highest influence back to Pu'er. If there is a tie in influence, it is based on the person first to move in the movement phase.</p>
+            <p class="explanation">If you have a person where there are presents available, you will take one per person. The highest influence person
+              gets the presents. In case of a tie in influence, it is split</p>
             <% break; %>
             <% case 'income': %>
             <p class="explanation">You have earned <%= player.income %> income this round. You may choose how much
             of it you want to convert to points.</p>
+            <% case 'complete': %>
+            <p class="explanation">The game has ended. I haven't finished this part yet.</p>
+            <% break %>
             <%default:
             break; 
           } %>
@@ -231,8 +284,8 @@
         <h2>Auction Options</h2>
         <% if (player.color == game.playerIds[game.currentPlayerIndex].color) { %>
         <div id="auctionOtherActions">
-          <button class="enterButton" id="auctionPuerButton">Place trader in Pu'er</button>
-          <button class="enterButton" id="passAuctionButton">Pass Auction Phase</button>
+          <button class="enterButton" id="auctionPuerButton" title="<%- tooltips['placePuer'] %>">Place trader in Pu'er</button>
+          <button class="enterButton" id="passAuctionButton" title="End your auction turn">Pass Auction Phase</button>
         </div>
         <% } %>
         <div class="auctionsContainer">
@@ -240,7 +293,7 @@
                 <div class="auctionItem" id="auction_<%= auctionItem %>">
                   <table>
                     <tr>
-                      <th class="auctionItemHeader" colspan=2><%= auctionItem[0].toUpperCase() + auctionItem.substr(1) %></th>
+                      <th class="auctionItemHeader" colspan=2 title="<%- tooltips[auctionItem]%>"><%= auctionItem[0].toUpperCase() + auctionItem.substr(1) %></th>
                     </tr>
                     <tr>
                       <th>Cost</th><th>Bidder</th>
@@ -276,7 +329,7 @@
     <% } %>
 
     <!-- auction snapshop -->
-    <% if (game.auctionSnapshot && game.phase !== 'auction' && game.phase !== 'income') { %>
+    <% if (game.auctionSnapshot && (game.phase == 'resolve' || game.phase == 'move')) { %>
       <div class="phase phaseAuctionSnapshot auctionStyle">
         <button id="auctionSnapshotButton">Show Auction Results</button>
         <div class='pastResults'>
@@ -285,7 +338,7 @@
                 <div class="auctionItem" id="auction_<%= auctionItem %>">
                   <table>
                     <tr>
-                      <th class="auctionItemHeader" colspan=2><%= auctionItem[0].toUpperCase() + auctionItem.substr(1) %></th>
+                      <th class="auctionItemHeader" colspan=2 title="<%- tooltips[auctionItem]%>"><%= auctionItem[0].toUpperCase() + auctionItem.substr(1) %></th>
                     </tr>
                     <tr>
                       <th>Cost</th><th>Bidder</th>
