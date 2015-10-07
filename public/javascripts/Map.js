@@ -153,7 +153,9 @@
 
         $city.append('<div class="mapIncomeInfo">' +
                       '<table><tr><td><img src="/images/person.png"> :</td><td>' + ((counter+1) * 3) + '</td></tr>' +
-                      '<tr><td><img src="/images/tradingpost.png"> :</td><td>' + trading + '</table></div>')
+                      '<tr><td><img src="/images/tradingpost.png"> :</td><td>' + trading + '</td></tr>' + 
+                      '<tr><td><img src="/images/present.gif"> :</td><td>' + self.game.board[cityName].presents + '</td></tr>' +
+                      '</table></div>')
 
         self.$cities[cityName] = $city;
       })(i);
