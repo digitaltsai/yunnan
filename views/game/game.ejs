@@ -41,9 +41,20 @@
     var gameUrl = '/game/' + gameId;
     var player = <%- JSON.stringify(player) %>;
     var phase = '<%= game.phase %>';
+    <% if (game.phase === 'auction' && player.color == game.playerIds[game.currentPlayerIndex].color) {
+      var totalCost = 0;
+      for (var i in game.auctions) {
+        for (var cost in game.auctions[i]) {
+          if (game.auctions[i][cost] == player.color) {
+            totalCost = totalCost + parseInt(cost);
+          }
+        }
+      } %>
+    var auctionCosts = <%- totalCost %>;
+    <% } %>
 
     <% if (player.color == game.playerIds[game.currentPlayerIndex].color) { %>
-      //alert('It is your turn');
+      alert('It is your turn.');
     <% } %>
 
     $(function() {
@@ -67,6 +78,21 @@
             var postData = {auctionItem: itemName, bidLevel: value};
             if (from != 'null') {
               postData.from = from;
+            }
+
+            var newAuctionCosts = auctionCosts + parseInt(value);
+            if (newAuctionCosts > player.coins) {
+              var negative = player.coins - newAuctionCosts;
+              var round = <%- game.round %>;
+              var multiplier = (9 - round);
+              if (multiplier < 2) {
+                multiplier = 2;
+              }
+
+              var promptMessage = 'If you bid on this item, you will owe ' + Math.abs(negative) + ' coins, which results in losing ' + Math.abs(negative * multiplier) + ' points';
+              if (!confirm(promptMessage)) {
+                return;
+              }
             }
 
             $.post(gameUrl + '/bid', postData, function(result) {
