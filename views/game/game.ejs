@@ -80,17 +80,25 @@
               postData.from = from;
             }
 
+            if (itemName != 'bank') {
+
             var newAuctionCosts = auctionCosts + parseInt(value);
-            if (newAuctionCosts > player.coins) {
-              var negative = player.coins - newAuctionCosts;
-              var round = <%- game.round %>;
-              var multiplier = (9 - round);
-              if (multiplier < 2) {
-                multiplier = 2;
+              if (newAuctionCosts > player.coins) {
+                var negative = player.coins - newAuctionCosts;
+                var round = <%- game.round %>;
+                var multiplier = (9 - round);
+                if (multiplier < 2) {
+                  multiplier = 2;
+                }
+
+                var promptMessage = 'If you bid on this item, you will owe ' + Math.abs(negative) + ' coins, which results in losing ' + Math.abs(negative * multiplier) + ' points';
+                if (!confirm(promptMessage)) {
+                  return;
+                }
               }
 
-              var promptMessage = 'If you bid on this item, you will owe ' + Math.abs(negative) + ' coins, which results in losing ' + Math.abs(negative * multiplier) + ' points';
-              if (!confirm(promptMessage)) {
+            } else if (player.freeTraders) {
+              if (!confirm('You still have traders in your supply. If you choose the bank, you will not be able to use them this turn. Are you sure?')) {
                 return;
               }
             }
@@ -100,6 +108,7 @@
             }).fail(function(response) {
               alert(response.responseText);
             });
+            
           });
         })($(this))
       });
