@@ -54,7 +54,7 @@ module.exports = function(Game) {
 
     var posts = 0;
     for (var color in this.board[regionName].tradingPost) {
-      if (this.findCheapestRoute(this.players[color], config.regions[0].name, regionName) == 0) {
+      if (this.getCheapestRoute(this.players[color], config.regions[0].name, regionName) == 0) {
         posts += this.board[regionName].tradingPost[color];  
       }
     }
