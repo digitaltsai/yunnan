@@ -244,6 +244,8 @@ module.exports = function(Game) {
 
     player.passAuction = true;
 
+    this.addLog(player, 'Passed auction turn');
+
     this.nextPlayer();
   };
 }
