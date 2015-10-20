@@ -181,13 +181,13 @@ module.exports = function(Game) {
       var origin = config.regions[i].name;
       var destination = config.regions[i+1].name;
 
-      if (this.board[destination].traders[player.color]) {
+      if (this.board[destination].traders[player.color] || this.board[destination].tradingPost[player.color]) {
         routes[origin][destination] = 0;
       } else {
         routes[origin][destination] = 3;
       }
       
-      if (this.board[origin].traders[player.color]) {
+      if (this.board[origin].traders[player.color] || this.board[destination].tradingPost[player.color]) {
         routes[destination][origin] = 0;
       } else {
         routes[destination][origin] = 3;

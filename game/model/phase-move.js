@@ -254,7 +254,7 @@ module.exports = function(Game) {
         console.log('calculating cost for ' + regionName + ':' + cost);
         if (cost) {
           this.addTrader(player, config.regions[0].name, this.board[regionName].traders[player.color]);
-          this.addLog(player, 'sending ' + this.board[                                                      regionName].traders[player.color] + ' traders from ' + regionName + 'back to ' + config.regions[0].name)
+          this.addLog(player, 'sending ' + this.board[regionName].traders[player.color] + ' traders from ' + regionName + 'back to ' + config.regions[0].name)
           this.board[regionName].traders[player.color]--;
         }
       }
