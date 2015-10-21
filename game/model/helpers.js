@@ -166,6 +166,10 @@ module.exports = function(Game) {
     return testAndQueue(from, 0);
   };
 
+  // Game.prototype.test = function() {
+  //   return this.calculatePlayerIncome(this.getPlayer('blue'));
+  // };
+
   // returns the cost of the route
   Game.prototype.getCheapestRoute = function(player, from, to) {
     // time to create a tree map
@@ -187,7 +191,7 @@ module.exports = function(Game) {
         routes[origin][destination] = 3;
       }
       
-      if (this.board[origin].traders[player.color] || this.board[destination].tradingPost[player.color]) {
+      if (this.board[origin].traders[player.color] || this.board[origin].tradingPost[player.color]) {
         routes[destination][origin] = 0;
       } else {
         routes[destination][origin] = 3;
@@ -213,7 +217,7 @@ module.exports = function(Game) {
     var graph = new Graph(routes);
 
     var cheapestRoute = graph.shortestPath(from, to);
-
+    console.log(cheapestRoute);
     var cost = 0;
     for (var i = 0; i < cheapestRoute.length-1; i++) {
       cost = cost + routes[cheapestRoute[i]][cheapestRoute[i+1]];

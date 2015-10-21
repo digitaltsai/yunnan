@@ -90,7 +90,7 @@ module.exports = function(Game) {
 
       var tax = 0;
       if (regionName != config.regions[0].name) {
-        this.getCheapestRoute(player, config.regions[0].name, regionName);
+        tax += this.getCheapestRoute(player, config.regions[0].name, regionName);
       }
 
       var traderMultiplier = config.regions[this.board[regionName].index].income.trader - tax;

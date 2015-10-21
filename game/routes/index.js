@@ -131,6 +131,12 @@ router.post('/:gameId/start', function(req, res, next) {
   });
 });
 
+router.get('/:gameId/test', function(req, res, next) {
+  var game = req.game;
+  var result = game.test();
+  res.status(200).json(result)
+});
+
 router.post('/:gameId/bid', function(req, res, next) {
   var game = req.game;
   game.bid(req.player, req.body.auctionItem, req.body.bidLevel, req.body.from);
