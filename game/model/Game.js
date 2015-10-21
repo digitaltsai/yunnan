@@ -157,6 +157,13 @@ Game.prototype.save = function(callback) {
   });
 };
 
+Game.prototype.update = function(newGameState, callback) {
+  this.lastUpdate = new Date().getTime(0);
+  db.set('game-' + this.id, newGameState, function(err, game) {
+    callback(err, game);
+  });
+};
+
 // end asyc methods
 
 Game.prototype.reset = function() {

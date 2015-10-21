@@ -198,7 +198,7 @@ module.exports = function(Game) {
     if (this.bridges[player.color]) {
       for (var origin in this.bridges[player.color]) {
         for (var destination in this.bridges[origin]) {
-          if (this.board[destination].traders[player.color]) {
+          if (this.board[destination].traders[player.color] || this.board[destination].tradingPost[player.color]) {
             routes[origin][destination] = 0;
           } else {
             routes[origin][destination] = 3;

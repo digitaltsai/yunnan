@@ -78,6 +78,17 @@ router.get('/:gameId/info', function(req, res, next) {
   res.json(req.game);
 });
 
+router.post('/:gameId/edit', function(req, res, next) {
+  var game = req.game;
+  var newInfo = req.body;
+  game.update(newInfo, function(err, game) {
+    if (err) {
+      return res.status(400).send(err);
+    }
+    res.status(200).json(game);
+  });
+});
+
 router.post('/:gameId/join', function(req, res, next) {
   var game = req.game;
   game.addPlayer(req.user, req.body.color);
