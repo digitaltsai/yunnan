@@ -138,7 +138,7 @@
 
       var traders = self.data.board[destination].traders;
       for (var i in traders) {
-        if (i != player.color && self.data.players[i].influence < player.influence) {
+        if (i != player.color && self.data.board[destination].traders[i] && self.data.players[i].influence < player.influence) {
           hasPeople = true;
           $(this).find('.mapColor-' + i).find('.spriteTrader').first().addClass('spriteHoverable')
           $(this).find('.mapColor-' + i).find('.spriteTrader').first().bind('click.trader', chooseKick)
