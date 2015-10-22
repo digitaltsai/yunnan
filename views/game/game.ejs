@@ -352,11 +352,11 @@
             <div id="auctionFrom">
               <p>Take trader from...</p>
               <% if (player.freeTraders > 0) { %>
-                <input type="radio" name="from" value="null"> Supply (<%= player.freeTraders %>)<br>
+                <input type="radio" name="from" value="null"> Supply (<%= player.freeTraders %>)
               <% } %>
               <% for (var i in game.board) {
                   if (i !== 'bridges' && game.board[i].name != 'PU\'ER' && game.board[i].traders[player.color]) { %>
-                  <input type="radio" name="from" value="<%=game.board[i].name%>"> <%=game.board[i].name%> (<%= game.board[i].traders[player.color] %>)
+                  <br><input type="radio" name="from" value="<%=game.board[i].name%>"> <%=game.board[i].name%> (<%= game.board[i].traders[player.color] %>)
               <% }
                } %>
             </div>
