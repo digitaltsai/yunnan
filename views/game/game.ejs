@@ -326,17 +326,26 @@
             <table cellspacing="0" border="1px solid black" cellpadding="2">
               <thead>
                 <tr>
-                  <th>Color</th><th>Points</th><th>Coins</th><th>Presents</th><th>Influence</th><th>Border</th><th>Total</th>
+                  <th>Color</th><th>Points</th><th>Coins</th><th>Tea Houses</th><th>Presents</th><th>Influence</th><th>Border</th><th>Total</th>
                 </tr>
               </thead>
               <tbody>
-            <% for (var color in game.players) { %>
+            <% for (var color in game.players) { 
+              for (var regionName in game.board) {
+                var teaHouseCount = 0;
+                if (game.board[regionName].teaHouse == color) {
+                  teaHouseCount++;
+                }
+              }
+              %>
               <tr>
                 <td><%- color %></td>
 
                 <td><%- game.players[color].points %></td>
 
                 <td><%- Math.floor(game.players[color].coins / 3) %></td>
+
+                <td><%- (teaHouseCount * 12) %></td>
 
                 <td><%- (game.players[color].presents * 5) %></td>
 
@@ -347,6 +356,7 @@
                 <td><%- (game.players[color].points
                           + Math.floor(game.players[color].coins / 3)
                           + (game.players[color].presents * 5)
+                          + (teaHouseCount * 12)
                           + pointsInfluence[game.players[color].influence]
                           + pointsMovement[game.players[color].border]) %></td>
                 </tr>
