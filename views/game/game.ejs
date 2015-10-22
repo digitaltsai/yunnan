@@ -213,7 +213,7 @@
     <div id='playerBar'>
       <% for (var i = 0; i < game.playerIds.length; i++) { %>
         <div class='playerInfo <%=game.playerIds[i].color%>Bg <%= game.currentPlayerIndex == i ? game.playerIds[i].color+'Highlight' : '' %>'>
-          <%= game.currentPlayerIndex == i ? '*' : '' %> <%=game.playerIds[i].name%><br>
+          <%= game.currentPlayerIndex == i ? '*' : '' %> <%=game.playerIds[i].name%> (<%- game.playerIds[i].color.substr(0, 1) %>)<br>
           <table class='playerInfoTable'>
             <tr>
               <!--
@@ -385,7 +385,7 @@
                         <td<%- (j > 7) ? ' class="highBid"' : '' %>><%= j %><%- (j < 9) ? '*' : '' %></td>
                         <td>
                         <% if (game.auctions[auctionItem][j]) { %>
-                          <img src='/images/person.png' class="mapColor-<%- game.auctions[auctionItem][j] %>">
+                          <img src='/images/person.png' class="mapColor-<%- game.auctions[auctionItem][j] %>"> - <%- game.auctions[auctionItem][j].substr(0, 1) %>
                         <% } else { %>
                           <button class="enterButton" value="<%= j %>"<% if (player.color != game.playerIds[game.currentPlayerIndex].color) { %> disabled<% }%>>Bid</button>
                         <% } %>

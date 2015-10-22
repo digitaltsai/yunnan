@@ -351,6 +351,7 @@
     }
 
     if (hasUnitHere) {
+      $playerDiv.prepend(color.substr(0, 1) + ' ');
       this.$cities[cityName].append($playerDiv);
     }
 

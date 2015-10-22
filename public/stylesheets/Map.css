@@ -73,6 +73,7 @@
 
 .mapPlayer {
   padding-left: 10px;
+  margin-bottom: 4px;
 }
 
 .mapSelected {
@@ -89,7 +90,7 @@
 }
 
 .mapSprite {
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .spriteHoverable {
