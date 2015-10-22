@@ -126,7 +126,7 @@ module.exports = function(Game) {
     // now see if there are bridges that can add to routes
     if (this.bridges[player.color]) {
       for (var origin in this.bridges[player.color]) {
-        for (var destination in this.bridges[origin]) {
+        for (var destination in this.bridges[player.color][origin]) {
           routes[origin][destination] = 1;
         }
       }
@@ -178,7 +178,7 @@ module.exports = function(Game) {
     // now see if there are bridges that can add to routes
     if (this.bridges[player.color]) {
       for (var origin in this.bridges[player.color]) {
-        for (var destination in this.bridges[origin]) {
+        for (var destination in this.bridges[player.color][origin]) {
           if (this.board[destination].traders[player.color] || this.board[destination].tradingPost[player.color]) {
             routes[origin][destination] = 0;
           } else {
