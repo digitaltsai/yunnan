@@ -117,53 +117,30 @@ module.exports = function(Game) {
     }
 
     for (var i = 0; i < config.regions.length-1; i++) {
-      routes[config.regions[i].name][config.regions[i+1].name] = true;
-      routes[config.regions[i+1].name][config.regions[i].name] = true;
+      var origin = config.regions[i].name;
+      var destination = config.regions[i+1].name;
+      routes[origin][destination] = 1;
+      routes[destination][origin] = 1;
     }
 
     // now see if there are bridges that can add to routes
     if (this.bridges[player.color]) {
-      for (var i in this.bridges[player.color]) {
-        for (var j in this.bridges[i]) {
-          routes[i][j] = true;
+      for (var origin in this.bridges[player.color]) {
+        for (var destination in this.bridges[origin]) {
+          routes[origin][destination] = 1;
         }
       }
     }
-    
-    var getPossibleRoutes = function(origin) {
-      var possibleRoutes = [];
-      for (var i in routes[origin]) {
-        possibleRoutes.push(i);
-      }
-      return possibleRoutes;
-    };
 
-    var traveled = {};
+    var graph = new Graph(routes);
 
-    var queue = [];
-
-    var testAndQueue = function(currentLocation, steps) {
-      if (currentLocation == to) {
-        return steps;
-      } else {
-        // not this location? ok we should add possible routes to the queue
-        var possibleRoutes = getPossibleRoutes(currentLocation);
-        for (var i = 0; i < possibleRoutes.length; i++) {
-          if (!traveled[currentLocation+'-'+possibleRoutes[i]]) {
-            traveled[currentLocation+'-'+possibleRoutes[i]] = true;
-            queue.push({
-              steps: steps+1,
-              location: possibleRoutes[i]
-            })
-          }
-        }
-      }
-      var next = queue.shift();
-      console.log(next);
-      return testAndQueue(next.location, next.steps);
+    var cheapestRoute = graph.shortestPath(from, to);
+    console.log(cheapestRoute);
+    var cost = 0;
+    for (var i = 0; i < cheapestRoute.length-1; i++) {
+      cost = cost + routes[cheapestRoute[i]][cheapestRoute[i+1]];
     }
-
-    return testAndQueue(from, 0);
+    return cost;
   };
 
   // Game.prototype.test = function() {

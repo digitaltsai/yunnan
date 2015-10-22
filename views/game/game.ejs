@@ -410,7 +410,7 @@
     <% if (game.phase === 'move' && player.color == game.playerIds[game.currentPlayerIndex].color) { %>
     <div class="phase phaseMove">
       <h2>Options</h2>
-      <% if (player.freeMoves) { %><button id="mapMoveButton">Move Trader</button> <% } %><button id="mapMoveEndButton">End Turn</button>
+      <% if (player.freeMoves) { %>You have <%= player.freeMoves %> moves left. <button id="mapMoveButton">Move Trader</button> <% } %><button id="mapMoveEndButton">End Turn</button>
       <div id="moveBuildOptions">
         <% if (player.buildings.teaHouse) { %><div class="buildTeaHouse moveBuild mapHoverable" data-src="teaHouse"><img src='/images/teahouse.png'> Build Tea House</div><% } %>
         <% if (player.buildings.tradingPost) { %><div class="buildTradingPost moveBuild mapHoverable" data-src="tradingPost"><img src='/images/tradingpost.png'> Build Trading Post</div><% } %>
