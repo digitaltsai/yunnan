@@ -15,9 +15,9 @@
 
       'building': 'Receive a building of your choice. Keep in mind you can only have two of each type of buildings.<br><br>Tea House: If an inspector comes to a region with a tea house, the owner of the tea house is immune. Tea houses are also worth 12 points at the end of the game.<br><br>Trading Post: Trading posts provide income and can connect routes.<br><br>Bridge: A bridge can shorten the distance it takes to travel to a location. You may build bridges at the dashed lines',
 
-      'influence': 'Influence<br><br>When you move a trader to a region, you may kick a player with lower influence back one region. When an inspector goes to a region, he always kicks the player with the higher influence, unless the player has an influence of 4.',
+      'influence': 'Influence<br><br>When you move a trader to a region, you may kick a player with lower influence back one region. When an inspector goes to a region, he always kicks the player with the higher influence, unless the player has an influence of 4.<br><br>You get bonus points for your influence at the end of the game too (0, 1, 4, 9, 16).',
 
-      'border': 'Border Crossings<br><br>This is the number of border crossings you get during the start of your move phase.',
+      'border': 'Border Crossings<br><br>This is the number of border crossings you get during the start of your move phase.<br><br>You get bonus points for your influence at the end of the game too (0, 1, 4, 9, 16).',
 
       'presents': 'Presents<br><br>Each present is worth 5 points.',
 
@@ -331,8 +331,8 @@
               </thead>
               <tbody>
             <% for (var color in game.players) { 
+              var teaHouseCount = 0;
               for (var regionName in game.board) {
-                var teaHouseCount = 0;
                 if (game.board[regionName].teaHouse == color) {
                   teaHouseCount++;
                 }
