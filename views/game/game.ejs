@@ -25,6 +25,22 @@
 
       'income': 'How much the player earned last round. This is dependent on the position and number of people on the map.'
     }
+
+    var pointsInfluence = {
+      '0': 0,
+      '1': 1,
+      '2': 4,
+      '3': 9,
+      '4': 16
+    }
+
+    var pointsMovement = {
+      '2': 0,
+      '3': 1,
+      '4': 4,
+      '5': 9,
+      '6': 16
+    }
   %>
 
   <link rel="stylesheet" href="/stylesheets/Game.css" type="text/css"/>
@@ -53,7 +69,7 @@
     var auctionCosts = <%- totalCost %>;
     <% } %>
 
-    <% if (player.color == game.playerIds[game.currentPlayerIndex].color) { %>
+    <% if (game.playerIds[game.currentPlayerIndex] && player.color == game.playerIds[game.currentPlayerIndex].color) { %>
       alert('It is your turn.');
     <% } %>
 
@@ -306,7 +322,37 @@
             of it you want to convert to points.</p>
             <% break; %>
             <% case 'complete': %>
-            <p class="explanation">The game has ended. I haven't finished this part yet.</p>
+            <p class="explanation">The game has ended. Here is the breakdown for points:</p>
+            <table cellspacing="0" border="1px solid black" cellpadding="2">
+              <thead>
+                <tr>
+                  <th>Color</th><th>Points</th><th>Coins</th><th>Presents</th><th>Influence</th><th>Border</th><th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+            <% for (var color in game.players) { %>
+              <tr>
+                <td><%- color %></td>
+
+                <td><%- game.players[color].points %></td>
+
+                <td><%- Math.floor(game.players[color].coins / 3) %></td>
+
+                <td><%- (game.players[color].presents * 5) %></td>
+
+                <td><%- pointsInfluence[game.players[color].influence] %></td>
+
+                <td><%- pointsMovement[game.players[color].border] %></td>
+
+                <td><%- (game.players[color].points
+                          + Math.floor(game.players[color].coins / 3)
+                          + (game.players[color].presents * 5)
+                          + pointsInfluence[game.players[color].influence]
+                          + pointsMovement[game.players[color].border]) %></td>
+                </tr>
+            <% } %>
+              </tbody>
+            </table>
             <% break %>
             <%default:
             break; 
