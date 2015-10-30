@@ -61,7 +61,7 @@ module.exports = {
       var filtered = [];
       for (var i = 0; i < keyValue.length; i++) {
         if (keyValue[i].key.indexOf(filter) !== -1) {
-          filtered.push(keyValue[i]);
+          filtered.push(keyValue[i].value);
         }
       }
       
