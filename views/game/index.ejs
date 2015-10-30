@@ -30,7 +30,7 @@
       $.get('/game/list', function(result) {
         for (var i = 0; i < result.length; i++) {
           try {
-            var game = JSON.parse(result[i].value);
+            var game = result[i];
           } catch(e) {
             continue;
           }
@@ -78,7 +78,7 @@
 
         }
 
-      });
+      }, 'json');
     });
 
     function inGame(game) {
