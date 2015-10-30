@@ -27,8 +27,6 @@ var Game = function(gameId, options) {
     this.passAuction = true;
     this.resolvedAuction = true;
 
-    this.createTime = new Date().getTime();
-    this.lastUpdate = new Date().getTime();
   }
 
   var Region = function(regionProps) {
@@ -48,7 +46,8 @@ var Game = function(gameId, options) {
       currentPlayerIndex: 0,
       history: [],
       round: 0,
-
+      createTime: new Date().getTime(),
+      lastUpdate: new Date().getTime(),
       players: {
         'red': new Player('red'),
         'yellow': new Player('yellow'),
@@ -158,7 +157,7 @@ Game.prototype.save = function(callback) {
 };
 
 Game.prototype.update = function(newGameState, callback) {
-  this.lastUpdate = new Date().getTime(0);
+  this.lastUpdate = new Date().getTime();
   db.set('game-' + this.id, newGameState, function(err, game) {
     callback(err, game);
   });
