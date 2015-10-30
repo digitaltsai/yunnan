@@ -104,7 +104,7 @@ Game.list = function(callback) {
     }
 
     games = games.sort(function(a, b) {
-      if (a.lastUpdate < b.lastUpdate) {
+      if (a.lastUpdate > b.lastUpdate) {
         return -1;
       }  else {
         return 1;
