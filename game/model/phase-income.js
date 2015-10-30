@@ -26,7 +26,7 @@ module.exports = function(Game) {
       } else if (a.value > b.value) {
         return 1;
       }
-      return 1;
+      return -1;
     });
 
     for (var i = 0; i < this.playerIds.length; i++) {
